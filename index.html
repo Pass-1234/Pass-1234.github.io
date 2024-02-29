@@ -145,6 +145,106 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2024/02/29/nfs%E6%9C%8D%E5%8A%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="John Doe">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Hexo">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2024/02/29/nfs%E6%9C%8D%E5%8A%A1/" class="post-title-link" itemprop="url">nfs</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2024-02-29 17:01:54 / Modified: 17:06:55" itemprop="dateCreated datePublished" datetime="2024-02-29T17:01:54+08:00">2024-02-29</time>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="nfs服务"><a href="#nfs服务" class="headerlink" title="nfs服务"></a>nfs服务</h2><p>任务描述：请采用nfs，实现共享资源的安全访问。 </p>
+<p>（1）配置linux2为kdc服务器，负责linux3和linux4的验证。 </p>
+<p>（2）在linux3上，创建用户，用户名为xiao，uid&#x3D;222，gid&#x3D;222，家目录为 &#x2F;home&#x2F;xiaodir。 </p>
+<p>（3）配置linux3为nfs服务器，目录&#x2F;srv&#x2F;sharenfs的共享要求为：linux服 务器所在网络用户有读写权限，所有用户映射为xiao，kdc加密方式为krb5p。 </p>
+<p>（4）配置linux4为nfs客户端，利用autofs按需挂载linux3上的&#x2F;srv&#x2F;sharenfs 到&#x2F;sharenfs目录，挂载成功后在该目录创建test目录。</p>
+<h2 id="环境"><a href="#环境" class="headerlink" title="环境"></a>环境</h2><table>
+<thead>
+<tr>
+<th align="center">主机名</th>
+<th align="center">IP</th>
+<th align="center">服务</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">linux1.skills.lan</td>
+<td align="center">10.1.210.111</td>
+<td align="center">kdc服务器</td>
+</tr>
+<tr>
+<td align="center">linux2.skills.lan</td>
+<td align="center">10.1.210.112</td>
+<td align="center">nfs服务器</td>
+</tr>
+<tr>
+<td align="center">linux3.skills.lan</td>
+<td align="center">10.1.210.113</td>
+<td align="center">nfs客户端</td>
+</tr>
+</tbody></table>
+<h3 id="1-kdc服务配置"><a href="#1-kdc服务配置" class="headerlink" title="1.kdc服务配置"></a>1.kdc服务配置</h3><p>（1）配置linux1为kdc服务器，负责linux3和linux4的验证。 </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br></pre></td><td class="code"><pre><span class="line">[root@linux1 ~]# yum install krb5-server krb5-workstation.x86_64 </span><br><span class="line">[root@linux1 /]# vi /etc/krb5.conf</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">To opt out of the system crypto-policies configuration of krb5, remove the</span></span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">symlink at /etc/krb5.conf.d/crypto-policies <span class="built_in">which</span> will not be recreated.</span></span><br><span class="line">includedir /etc/krb5.conf.d/</span><br><span class="line"></span><br><span class="line">[logging]</span><br><span class="line">    default = FILE:/var/log/krb5libs.log</span><br><span class="line">    kdc = FILE:/var/log/krb5kdc.log</span><br><span class="line">    admin_server = FILE:/var/log/kadmind.log</span><br><span class="line"></span><br><span class="line">[libdefaults]</span><br><span class="line">    dns_lookup_realm = false</span><br><span class="line">    ticket_lifetime = 24h</span><br><span class="line">    renew_lifetime = 7d</span><br><span class="line">    forwardable = true</span><br><span class="line">    rdns = false</span><br><span class="line">    pkinit_anchors = FILE:/etc/pki/tls/certs/ca-bundle.crt</span><br><span class="line">    spake_preauth_groups = edwards25519</span><br><span class="line">    dns_canonicalize_hostname = fallback</span><br><span class="line">    qualify_shortname = &quot;&quot;</span><br><span class="line">    default_realm = SKILLS.LAN#改</span><br><span class="line">    default_ccache_name = KEYRING:persistent:%&#123;uid&#125;</span><br><span class="line"></span><br><span class="line">[realms]</span><br><span class="line"> SKILLS.LAN = &#123;#改</span><br><span class="line">     kdc = linux1.skills.lan#改</span><br><span class="line">     admin_server = linux1.skills.lan#改</span><br><span class="line"> &#125;</span><br><span class="line"></span><br><span class="line">[domain_realm]</span><br><span class="line"> .skills.lan = SKILLS.LAN#改</span><br><span class="line"> skills.lan = SKILLS.LAN#改</span><br><span class="line"> [root@linux1 /]# vi /var/kerberos/krb5kdc/kadm5.acl</span><br><span class="line"> */admin@SKILLS.LAN      *</span><br><span class="line"> [root@linux1 /]# kdb5_util create -s</span><br><span class="line">Initializing database &#x27;/var/kerberos/krb5kdc/principal&#x27; for realm &#x27;SKILLS.LAN&#x27;,</span><br><span class="line">master key name &#x27;K/M@SKILLS.LAN&#x27;</span><br><span class="line">You will be prompted for the database Master Password.</span><br><span class="line">It is important that you NOT FORGET this password.</span><br><span class="line">Enter KDC database master key: #Pass-1234</span><br><span class="line">Re-enter KDC database master key to verify: #Pass-1234</span><br><span class="line">[root@linux1 /]# kadmin.local </span><br><span class="line">kadmin.local:  addprinc root/admin</span><br><span class="line">Enter password for principal &quot;root/admin@SKILLS.LAN&quot;: #Pass-1234</span><br><span class="line">Re-enter password for principal &quot;root/admin@SKILLS.LAN&quot;: #Pass-1234</span><br><span class="line">kadmin.local:  addprinc -randkey nfs/linux1.skills.lan</span><br><span class="line">kadmin.local:  addprinc -randkey nfs/linux2.skills.lan</span><br><span class="line">kadmin.local:  addprinc -randkey nfs/linux3.skills.lan</span><br><span class="line">kadmin.local:  ktadd nfs/linux1.skills.lan</span><br><span class="line">[root@linux1 /]# systemctl restart kadmin.service krb5kdc.service </span><br><span class="line">[root@linux1 /]# firewall-cmd --add-port=&#123;464,88,749&#125;/tcp --pe</span><br><span class="line">success</span><br><span class="line">[root@linux1 /]# firewall-cmd --add-port=&#123;464,88,749&#125;/tcp </span><br><span class="line">success</span><br><span class="line">[root@linux1 /]# for i in &#123;2..3&#125;</span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash"><span class="keyword">do</span></span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash">scp /etc/krb5.conf 10.1.210.11<span class="variable">$i</span>:/etc/krb5.conf</span></span><br><span class="line"><span class="meta prompt_">&gt; </span><span class="language-bash"><span class="keyword">done</span></span></span><br></pre></td></tr></table></figure>
+
+<h3 id="2-创建用户"><a href="#2-创建用户" class="headerlink" title="2.创建用户"></a>2.创建用户</h3><p>（2）在linux2上，创建用户，用户名为xiao，uid&#x3D;222，gid&#x3D;222，家目录为 &#x2F;home&#x2F;xiaodir。 </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">[root@linux2 ~]# groupadd -g 222 xiao</span><br><span class="line">[root@linux2 ~]# useradd -u 222 -g 222 -d /home/xiaodir xiao</span><br><span class="line">[root@linux2 ~]# id xiao</span><br><span class="line">用户id=222(xiao) 组id=222(xiao) 组=222(xiao)</span><br></pre></td></tr></table></figure>
+
+<h3 id="3-配置nfs服务器"><a href="#3-配置nfs服务器" class="headerlink" title="3.配置nfs服务器"></a>3.配置nfs服务器</h3><p>（3）配置linux2为nfs服务器，目录&#x2F;srv&#x2F;sharenfs的共享要求为：linux服 务器所在网络用户有读写权限，所有用户映射为xiao，kdc加密方式为krb5p。 </p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">[root@linux2 ~]# yum install -y krb5-workstation.x86_64  nfs-utils</span><br><span class="line">[root@linux2 ~]# kadmin </span><br><span class="line">Authenticating as principal root/admin@SKILLS.LAN with password.</span><br><span class="line">Password for root/admin@SKILLS.LAN: #Pass-1234</span><br><span class="line">kadmin:  ktadd nfs/linux2.skills.lan </span><br><span class="line">[root@linux2 ~]# mkdir /srv/sharenfs</span><br><span class="line">[root@linux2 ~]# chmod 777 /srv/sharenfs/</span><br><span class="line">/srv/sharenfs  10.1.210.0/24(rw,all_squash,anonuid=222,anongid=222,sec=krb5p)</span><br><span class="line">[root@linux2 ~]# systemctl restart nfs-server</span><br><span class="line">[root@linux2 ~]# showmount -e</span><br><span class="line">Export list for linux2.skills.lan:</span><br><span class="line">/srv/sharenfs 10.1.210.0/24</span><br><span class="line">[root@linux2 ~]# firewall-cmd --add-port=&#123;111,2049,20048&#125;/tcp --pe</span><br><span class="line">success</span><br><span class="line">[root@linux2 ~]# firewall-cmd --add-port=&#123;111,2049,20048&#125;/udp --pe</span><br><span class="line">success</span><br><span class="line">[root@linux2 ~]# firewall-cmd --reload </span><br><span class="line">success</span><br></pre></td></tr></table></figure>
+
+<h3 id="4-配置nfs客户端"><a href="#4-配置nfs客户端" class="headerlink" title="4.配置nfs客户端"></a>4.配置nfs客户端</h3><p>（4）配置linux4为nfs客户端，利用autofs按需挂载linux3上的&#x2F;srv&#x2F;sharenfs 到&#x2F;sharenfs目录，挂载成功后在该目录创建test目录。</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">[root@linux3 /]# yum install -y krb5-workstation.x86_64 nfs-utils autofs.x86_64 </span><br><span class="line">[root@linux3 /]# kadmin </span><br><span class="line">Authenticating as principal root/admin@SKILLS.LAN with password.</span><br><span class="line">Password for root/admin@SKILLS.LAN: </span><br><span class="line">kadmin:  ktadd nfs/linux3.skills.lan</span><br><span class="line">[root@linux3 /]# vi /etc/auto.master</span><br><span class="line">/sharenfs /etc/auto.nfs   #在任意位置添加</span><br><span class="line">[root@linux3 /]# vi /etc/auto.nfs</span><br><span class="line">test -cifs 10.1.210.112:/srv/sharenfs </span><br><span class="line">[root@linux3 /]# systemctl restart autofs.service nfs-server</span><br><span class="line">[root@linux3 test]# df -Th | grep /srv        #成功</span><br><span class="line">10.1.210.112:/srv/sharenfs nfs4       17G  1.6G   16G    9% /sharenfs/test</span><br></pre></td></tr></table></figure>
+
+
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
     <link itemprop="mainEntityOfPage" href="http://example.com/2024/02/28/samba/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
@@ -159,7 +259,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2024/02/28/samba/" class="post-title-link" itemprop="url">Untitled</a>
+            <a href="/2024/02/28/samba/" class="post-title-link" itemprop="url">samba</a>
         </h2>
 
         <div class="post-meta">
@@ -168,10 +268,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">Posted on</span>
-              
 
-              <time title="Created: 2024-02-28 20:42:58 / Modified: 11:51:12" itemprop="dateCreated datePublished" datetime="2024-02-28T20:42:58+08:00">2024-02-28</time>
+              <time title="Created: 2024-02-28 20:42:58" itemprop="dateCreated datePublished" datetime="2024-02-28T20:42:58+08:00">2024-02-28</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2024-02-29 17:02:35" itemprop="dateModified" datetime="2024-02-29T17:02:35+08:00">2024-02-29</time>
+              </span>
 
           
 
@@ -184,7 +290,8 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h1 id="linux作业"><a href="#linux作业" class="headerlink" title="linux作业"></a>linux作业</h1><h2 id="samba服务配置"><a href="#samba服务配置" class="headerlink" title="samba服务配置"></a>samba服务配置</h2><p>（1）在linux3上创建user00-user19等20个用户；user00和user01添加到manager组，user02和user03添加到dev组。把用户user00-user03添加到samba用户。</p>
+          <p>Welcome to <a target="_blank" rel="noopener" href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a target="_blank" rel="noopener" href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a target="_blank" rel="noopener" href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a target="_blank" rel="noopener" href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h1 id="linux作业"><a href="#linux作业" class="headerlink" title="linux作业"></a>linux作业</h1><h2 id="samba服务配置"><a href="#samba服务配置" class="headerlink" title="samba服务配置"></a>samba服务配置</h2><p>（1）在linux3上创建user00-user19等20个用户；user00和user01添加到manager组，user02和user03添加到dev组。把用户user00-user03添加到samba用户。</p>
 <p>（2）配置linux3为samba服务器,建立共享目录&#x2F;srv&#x2F;sharesmb，共享名与目录名相同。manager组用户对sharesmb共享有读写权限，dev组对sharesmb共享有只读权限；用户对自己新建的文件有完全权限，对其他用户的文件只有读权限，且不能删除别人的文件。在本机用smbclient命令测试。</p>
 <p>（3）在linux4修改&#x2F;etc&#x2F;fstab,使用用户user00实现自动挂载linux3的sharesmb共享到&#x2F;sharesmb。</p>
 <h3 id="实验环境关闭防火墙和selinux"><a href="#实验环境关闭防火墙和selinux" class="headerlink" title="实验环境关闭防火墙和selinux"></a>实验环境关闭防火墙和selinux</h3><figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">[root@linux1 ~]# systemctl stop firewalld.service </span><br><span class="line">[root@linux1 ~]# setenforce 0</span><br></pre></td></tr></table></figure>
@@ -368,7 +475,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">2</span>
+          <span class="site-state-item-count">3</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
